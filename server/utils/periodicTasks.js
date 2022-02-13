@@ -10,9 +10,12 @@ const updateRanking = new CronJob(
         try {
             // Set all users lastDayRanking to current ranking
             const players = await Player.find({}).lean();
-            players.forEach(async (player) => {
-                player.lastDayRanking = await leaderboard.rank(player.username);
-                await player.save();
+            players.map(async (player) => {
+                let leaderboardPlayer = await leaderboard.find(player.username);
+                const newPlayer = await Player.findByIdAndUpdate(
+                    player._id,
+                    {lastDayRanking: leaderboardPlayer.rank}
+                );
             });
             console.log("Ranking updated.");
 
@@ -34,34 +37,26 @@ const resetLeaderboard = new CronJob(
             const prizePool = await PrizePool.findOne({});
             const totalMoney = prizePool.money;
 
-            // Get prizes
-            const firstPrize = totalMoney * 0.2;
-            const secondPrize = totalMoney * 0.15;
-            const thirdPrize = totalMoney * 0.1;
-            const regularPrize = (totalMoney * 0.55) / 97;
+            const getPrize = (rank) => {
+                if (rank === 1) {
+                    return 0.2 * totalMoney;
+                } else if (rank === 2) {
+                    return 0.15 * totalMoney;
+                } else if (rank === 3) {
+                    return 0.1 * totalMoney;
+                } else {
+                    let remainingMoney = (totalMoney / 100) * 55;
+                    let percent = (remainingMoney / 5045) * (104 - rank);
+                    return percent;
+                }
+            };
 
             // Get top 100 players
             const top100 = await leaderboard.top(100);
-
             // Give prizes to top 100 players
-            top100.forEach(async (player) => {
-                if (player.rank === 1) {
-                    await Player.findByIdAndUpdate(player.id, {
-                        $inc: { money: money + firstPrize },
-                    });
-                } else if (player.rank === 2) {
-                    await Player.findByIdAndUpdate(player.id, {
-                        $inc: { money: money + secondPrize },
-                    });
-                } else if (player.rank === 3) {
-                    await Player.findByIdAndUpdate(player.id, {
-                        $inc: { money: money + thirdPrize },
-                    });
-                } else {
-                    await Player.findByIdAndUpdate(player.id, {
-                        $inc: { money: money + regularPrize },
-                    });
-                }
+            top100.map(async (player) => {
+                let newMoney = player.score + getPrize(player.rank);
+                await leaderboard.updateOne(player.id, newMoney, "replace");
             });
 
             // Reset prize pool

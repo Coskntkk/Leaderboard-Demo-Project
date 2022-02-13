@@ -5,37 +5,46 @@ exports.getLeaderboard = async (req, res) => {
     try {
         // Get top 100 players
         const username = req.params.username;
-        let top100 = await leaderboard.top(100);
+        let result = await leaderboard.top(100);
 
-        // Get arounds
-        let arounds = [];
+        let userFound = true;
         // If username is provided
         if (username) {
-            // Get player rank
-            const playerRank = await leaderboard.rank(username);
 
-            // If player is not in top 100, get arounds
-            if (playerRank > 100) {
-                arounds = await leaderboard.list(playerRank-3, playerRank+2);
+            // Check if username exists
+            let playerData = await Player.findOne({ username: username }).lean();
+            if (!playerData) {
+                userFound = false;
+            } else {
+                userFound = true;
+            }
+
+            // Get players rank
+            let rank = await leaderboard.rank(username);
+
+            // If player is not in top 100, get rank and arounds
+            if (rank > 100) {
+                let arounds = await leaderboard.list(rank-3, rank+2);
+                result = [...result, ...arounds];
             }
         }
-
-        // Merge top 100 and arounds
-        const result = top100.concat(arounds);
        
-        // Merge players with their leaderboard data
-        const playersWithLeaderboardData = await Promise.all(
-            result.map(async (player) => {
-                const playerData = await Player.findOne({ username: player.id }).lean();
-                return {
-                    ...player,
-                    country: playerData.country,
-                    lastDayRanking: playerData.lastDayRanking
-                };
-            })
-        );
+        // Get list of usernames
+        const usernames = result.map(player => player.id);
+        const playersData = await Player.find({ username: { $in: usernames } }).lean();
 
-        res.status(200).json({ status: "success", leaderboard: playersWithLeaderboardData });
+        // Merge players with their leaderboard data
+        const leaderboardData = playersData.map(playerData => {
+            let leaderboardItem = result.find(player => player.id === playerData.username);
+            return {
+                ...leaderboardItem,
+                country: playerData.country,
+                lastDayRanking: playerData.lastDayRanking
+            };
+        }).sort((a, b) => a.rank - b.rank);
+
+
+        res.status(200).json({ status: "success", leaderboard: leaderboardData, userFound });
 
     } catch (err) {
         // Return error

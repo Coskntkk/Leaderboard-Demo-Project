@@ -16,7 +16,11 @@ const playerSchema = new Schema({
         type: Number,
         required: true,
         default: 0,
-    }
-});
+    },
+    dateJoined: {
+        type: Date,
+        default: Date.now,
+    },
+},{ versionKey: false });
 
 module.exports = mongoose.model("Player", playerSchema);

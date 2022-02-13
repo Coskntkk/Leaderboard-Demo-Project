@@ -6,6 +6,7 @@ import Header from './components/Header';
 import Ranking from './components/Ranking';
 
 function App() {
+
   return (
     <div className="app">
       <Header />

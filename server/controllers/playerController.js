@@ -7,22 +7,17 @@ exports.getAllPlayers = async (req, res) => {
         // Get all players
         const players = await Player.find({}).lean();
 
-        // Merge players with their leaderboard data
-        const playersWithLeaderboardData = await Promise.all(
-            players.map(async (player) => {
-                const playerData = await leaderboard.find(player.username);
-                return {
-                    ...player,
-                    money: playerData.score,
-                    rank: playerData.rank,
-                };
-            })
-        );
+        // Paginate
+        const page = parseInt(req.query.page) || 1;
+        const limit = 20;
+        const startIndex = (page - 1) * limit;
+        const endIndex = page * limit;
+        const currentPlayers = players.slice(startIndex, endIndex);
 
         // Return players
         res.status(200).json({
             status: "success",
-            players: playersWithLeaderboardData,
+            currentPlayers
         });
 
     } catch (err) {
@@ -55,13 +50,10 @@ exports.createPlayer = async (req, res) => {
             const playerData = {
                 username: player.username,
                 country: player.country,
-                money: 0,
-                rank: 0,
             };
-            res.status(201).json({
-                status: "success",
-                player: playerData,
-            });
+
+            // Redirect to admin page
+            res.redirect("/admin");
         }
     } catch (err) {
         // Return error
@@ -83,17 +75,10 @@ exports.getPlayerByUsername = async (req, res) => {
                 error: "Player not found.",
             });
         } else {
-            // Merge player with their leaderboard data
-            const playerData = await leaderboard.find(player.username);
-            const playerWithLeaderboardData = {
-                ...player,
-                money: playerData.score,
-                rank: playerData.rank,
-            };
             // Return player
             res.status(200).json({
                 status: "success",
-                player: playerWithLeaderboardData,
+                player,
             });
         }
     } catch (err) {
@@ -124,20 +109,8 @@ exports.updatePlayer = async (req, res) => {
                 { new: true }
             ).lean();
 
-            // Merge player with their leaderboard data
-            const playerData = await leaderboard.find(player.username);
-            await leaderboard.updateOne(player.username, playerData.score);
-            const playerWithLeaderboardData = {
-                ...player,
-                money: playerData.score,
-                rank: playerData.rank,
-            };
-
-            // Return player
-            res.status(200).json({
-                status: "success",
-                player: playerWithLeaderboardData,
-            });
+            // Redirect to admin page
+            res.redirect("/admin");
         }
 
     } catch (err) {
@@ -166,11 +139,8 @@ exports.deletePlayer = async (req, res) => {
             // Delete player from leaderboard
             await leaderboard.remove(player.username);
 
-            // Return success
-            res.status(200).json({
-                status: "success",
-                message: "Player deleted.",
-            });
+            // Redirect to admin page
+            res.redirect("/admin");
         }
     } catch (err) {
         // Return error

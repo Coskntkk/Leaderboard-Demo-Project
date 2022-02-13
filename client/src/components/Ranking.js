@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import axios from "axios";
 import { nanoid } from 'nanoid';
-import { getDiff, getColor, getFlag } from "../flags/getters";
+import { getDiff, getColor, getFlag } from "../functions/getters";
 const apiUrl = require('../config.json').apiUrl;
 
 function Ranking() {
@@ -27,6 +27,7 @@ function Ranking() {
         const leaderboardData = response.data.leaderboard;
         setLeaderboard(leaderboardData);
         setLoading(false);
+        setNotFound(!response.data.userFound);
       })
       .catch(function (error) {
         // handle error
@@ -52,7 +53,7 @@ function Ranking() {
     fetchData();
     const interval = setInterval(() => {
       fetchData();
-    }, 30000);
+    }, 10000);
   }, []);
 
   useEffect(() => {
@@ -64,15 +65,16 @@ function Ranking() {
 
   return (
     <div className="ranking col-lg-10 offset-lg-1 col-md-12">
-      {notFound && <div className="alert alert-warning" role="alert">
-        Player not found.
-      </div>}
 
       {!failed && !loading && <>
       
         <div className="prize"> 
           <h3> Total prize on the pool: <strong>{prize}</strong> 💰</h3>
         </div>
+
+        {notFound && <div className="alert alert-danger" role="alert">
+          Player not found.
+        </div>}
       
         <table className="table table-striped table-hover">
           <thead>
@@ -89,11 +91,11 @@ function Ranking() {
             {leaderboard.map((item) => {
               if (item.rank <= 100) {
                 return (
-                  <tr key={nanoid()} style={item.id === username ? {backgroundColor: "wheat"}:{}}>
+                  <tr key={nanoid()} style={item.id === username ? {backgroundColor: "wheat"}: null} >
                     <th scope="row" style={{color: getColor(item.rank)}}>{item.rank}</th>
                     <td>{item.id}</td>
                     <td> {getFlag(item.country)} {item.country}</td>
-                    <td>{item.score}</td>
+                    <td>{(Math.round(item.score  * 100) / 100).toFixed(2)}</td>
                     {getDiff(item)}
                   </tr>
                 )
@@ -105,19 +107,20 @@ function Ranking() {
 
         <table className="table table-striped table-hover">
           <tbody>
+
           {leaderboard.map((item) => {
-              if (item.rank > 100) {
-                return (
-                  <tr key={nanoid()} style={item.id === username ? {backgroundColor: "wheat"}:{}}>
-                    <th scope="row" style={{color: getColor(item.rank)}}>{item.rank}</th>
-                    <td>{item.id}</td>
-                    <td> {getFlag(item.country)} {item.country}</td>
-                    <td>{item.score}</td>
-                    {getDiff(item)}
-                  </tr>
-                )
-              }
-            })}
+            if (item.rank > 100) {
+              return (
+                <tr key={nanoid()} style={item.id === username ? {backgroundColor: "wheat"}:{}}>
+                  <th scope="row" style={{color: getColor(item.rank)}}>{item.rank}</th>
+                  <td>{item.id}</td>
+                  <td> {getFlag(item.country)} {item.country}</td>
+                  <td>{item.score}</td>
+                  {getDiff(item)}
+                </tr>
+              )
+            }
+          })}
 
           </tbody>
         </table></>}

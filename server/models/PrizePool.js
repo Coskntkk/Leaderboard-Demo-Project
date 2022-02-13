@@ -7,6 +7,6 @@ const prizePoolSchema = new Schema({
         required: true,
         default: 0,
     },
-});
+},{ versionKey: false });
 
 module.exports = mongoose.model("PrizePool", prizePoolSchema);
