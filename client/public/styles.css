@@ -43,6 +43,7 @@ table {
     box-sizing: content-box;
     text-align: center;
     font-size: large;
+    margin-bottom: 50px;
 }
 .alert {
     text-align: center;

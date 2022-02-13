@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import axios from "axios";
 import { nanoid } from 'nanoid';
-import { getFlag } from "../flags/getters";
+import { getDiff, getColor, getFlag } from "../flags/getters";
 const apiUrl = require('../config.json').apiUrl;
 
 function Ranking() {
@@ -10,8 +10,7 @@ function Ranking() {
   const [username, setUsername] = useState(useParams().username);
 
   // Ranking params
-  const [top100, setTop100] = useState([]);
-  const [neighbors, setNeighbors] = useState([]);
+  const [leaderboard, setLeaderboard] = useState([]);
   const [searchParams] = useSearchParams();
   const [prize, setPrize] = useState(searchParams.get('prize'));
 
@@ -25,11 +24,8 @@ function Ranking() {
     axios.get(apiUrl + "/leaderboard/" + (username || "") )
       .then(function (response) {
         response.data.status === "success" ? setNotFound(false) : setNotFound(true);
-        console.log(response.data);
-        const dataTop100 = response.data.top100;
-        const dataNeighbors = response.data.neighbors;
-        setTop100(dataTop100);
-        setNeighbors(dataNeighbors);
+        const leaderboardData = response.data.leaderboard;
+        setLeaderboard(leaderboardData);
         setLoading(false);
       })
       .catch(function (error) {
@@ -66,37 +62,6 @@ function Ranking() {
     }
   }, [searchParams]);
 
-  const getDiff = (user) => {
-    const oldRank = user.lastDayRanking;
-    const newRank = user.rank;
-    const diff = newRank - oldRank;
-    if (oldRank === 0) {
-      return <td style={{color: "green"}}> <strong> New Player </strong> </td>;
-    }
-    let color = "";
-    let icon = "";
-    if (diff > 0) {
-      color = "red";
-      icon = "-";
-    } else if (diff < 0) {
-      color = "green";
-      icon = "+";
-    } else {
-      color = "orange";
-      icon = "";
-    }
-    return (<td style={{color: color}}> <strong> {icon}{Math.abs(user.rank - user.lastDayRanking)}</strong> </td>)
-  };
-
-  const getColor = (rank) =>{
-    let colors = ["orange", "darkgray", "brown"];
-    if (rank < 4) {
-      return colors[rank - 1];
-    } else {
-      return "black";
-    }
-  };
-
   return (
     <div className="ranking col-lg-10 offset-lg-1 col-md-12">
       {notFound && <div className="alert alert-warning" role="alert">
@@ -121,16 +86,18 @@ function Ranking() {
           </thead>
           <tbody>
 
-            {top100.map((item) => {
-              return (
-                <tr key={nanoid()} style={item.username === username ? {backgroundColor: "wheat"}:{}}>
-                  <th scope="row" style={{color: getColor(item.rank)}}>{item.rank}</th>
-                  <td>{item.username}</td>
-                  <td> {getFlag(item.country)} {item.country}</td>
-                  <td>{item.money}</td>
-                  {getDiff(item)}
-                </tr>
-              )
+            {leaderboard.map((item) => {
+              if (item.rank <= 100) {
+                return (
+                  <tr key={nanoid()} style={item.id === username ? {backgroundColor: "wheat"}:{}}>
+                    <th scope="row" style={{color: getColor(item.rank)}}>{item.rank}</th>
+                    <td>{item.id}</td>
+                    <td> {getFlag(item.country)} {item.country}</td>
+                    <td>{item.score}</td>
+                    {getDiff(item)}
+                  </tr>
+                )
+              }
             })}
 
           </tbody>
@@ -138,17 +105,18 @@ function Ranking() {
 
         <table className="table table-striped table-hover">
           <tbody>
-
-            {neighbors && neighbors.map((item) => {
-              return (
-                <tr>
-                  <th  key={nanoid()} scope="row">{item.rank}</th>
-                  <td>{item.username}</td>
-                  <td>{item.country}</td>
-                  <td>{item.money}</td>
-                  {getDiff(item)}
-                </tr>
-              )
+          {leaderboard.map((item) => {
+              if (item.rank > 100) {
+                return (
+                  <tr key={nanoid()} style={item.id === username ? {backgroundColor: "wheat"}:{}}>
+                    <th scope="row" style={{color: getColor(item.rank)}}>{item.rank}</th>
+                    <td>{item.id}</td>
+                    <td> {getFlag(item.country)} {item.country}</td>
+                    <td>{item.score}</td>
+                    {getDiff(item)}
+                  </tr>
+                )
+              }
             })}
 
           </tbody>
