@@ -2,7 +2,10 @@ const express = require("express");
 const router = express.Router();
 const playController = require("../controllers/playController");
 
-/* GET users listing. */
-router.route("/:username/:money").get(playController.play);
+// .../play
+router
+    .route("/")
+    // Give prize to a player
+    .post(playController.play);
 
 module.exports = router;

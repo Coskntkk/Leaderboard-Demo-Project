@@ -6,7 +6,6 @@ const mongoConnect = require("./config/dbConfig");
 mongoConnect();
 const PrizePool = require("./models/PrizePool");
 PrizePool.findOne({}, (err, pool) => {
-    err ? console.log(err) : console.log(pool);
     if (!pool) {
         const prizePool = new PrizePool({
             money: 0,
@@ -17,7 +16,6 @@ PrizePool.findOne({}, (err, pool) => {
 
 // Import the periodic tasks
 const {
-    updateLeaderboard,
     updateRanking, 
     resetLeaderboard
 } = require("./utils/periodicTasks");
@@ -25,7 +23,7 @@ const {
 // Import the roters
 const indexRouter = require("./routes/indexRoute");
 const playersRouter = require("./routes/playersRoute");
-const poolRouter = require("./routes/poolRoute");
+const prizeRouter = require("./routes/prizeRoute");
 const playRouter = require("./routes/playRoute");
 const leaderboardRouter = require("./routes/leaderboardRoute");
 
@@ -44,12 +42,11 @@ app.use(cors())
 // Routes
 app.use("/", indexRouter);
 app.use("/players", playersRouter);
-app.use("/pool", poolRouter);
+app.use("/prize", prizeRouter);
 app.use("/play", playRouter);
 app.use("/leaderboard", leaderboardRouter);
 
 // Periodic Tasks
-updateLeaderboard.start();
 resetLeaderboard.start();
 updateRanking.start();
 

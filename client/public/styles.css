@@ -9,6 +9,7 @@ body {
     background-repeat: no-repeat;
     background-size: 100% 100%;
     opacity: 0.9;
+    background-attachment: fixed;
 }
 
 .row {
@@ -26,6 +27,15 @@ body {
     text-align: center;
     width: 50%;
     margin: 0 25%;
+}
+
+.prize {
+    text-align: center;
+    width: 30%;
+    margin: 10px 35%;
+    background-color: wheat;
+    border-radius: 10px;
+    padding: 5px;
 }
 
 table {
@@ -48,4 +58,12 @@ tr {
 i {
     height: 20px;
     color: #000;
+}
+
+.loading, .failed {
+    text-align: center;
+    width: 50%;
+    margin: 10px 25%;
+    background-color: white;
+    padding: 50px 100px;
 }

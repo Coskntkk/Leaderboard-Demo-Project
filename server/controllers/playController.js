@@ -1,54 +1,43 @@
 const Player = require("../models/Player");
 const PrizePool = require("../models/PrizePool");
-const taxPercent = 2;
+const leaderboard = require("../models/Leaderboard");
+const taxPercent = require("../config/config").taxPercent;
 
 exports.play = async (req, res) => {
     try {
-        const username = req.params.username;
-        console.log(username);
-        const moneyRaw = parseInt(req.params.money);
-        console.log(moneyRaw);
-        const player = await Player.findOne({ username });
-        const pool = await PrizePool.findOne({});
-
-        // Check errors
+        // Get player
+        const player = await Player.findOne({ username: req.body.username }).lean();
         if (!player) {
-            res.status(500).json({
+            res.status(400).json({
                 status: "error",
-                error: "Player not found",
+                error: "Player does not exist.",
+            });
+        } else {
+            // Calculate tax and add to prize pool
+            const rawMoney = req.body.money;
+            const tax = rawMoney * taxPercent;
+            const money = rawMoney - tax;
+
+            // Get pool money and add tax to it
+            const pool = await PrizePool.findOne({}).lean();
+            const newPoolMoney = pool.money + tax;
+            await PrizePool.updateOne({}, { money: newPoolMoney });
+
+            // Get player money and add to it
+            let playerRank = await leaderboard.find(player.username);
+            let playerSocre = playerRank.score;
+            playerSocre += money;
+            await leaderboard.updateOne(player.username, playerSocre);
+
+            // Return response
+            res.status(200).json({
+                status: "success",
+                player: player.username,
+                playerMoney: playerSocre,
+                tax: tax,
+                pool: newPoolMoney,
             });
         }
-        if (!pool) {
-            res.status(500).json({
-                status: "error",
-                error: "Pool error",
-            });
-        }
-        if (!moneyRaw) {
-            res.status(500).json({
-                status: "error",
-                error: "Money not found",
-            });
-        }
-
-        // Calculate tax
-        const tax = (moneyRaw / 100) * taxPercent;
-        const moneyWoutTax = moneyRaw - tax;
-
-        // Add money to player
-        player.money += moneyWoutTax;
-        await player.save();
-
-        // Add tax to pool
-        pool.money += tax;
-        await pool.save();
-
-        // Return response
-        res.status(200).json({
-            status: "success",
-            player: player,
-            pool: pool,
-        });
     } catch (err) {
         // Return error
         res.status(500).json({

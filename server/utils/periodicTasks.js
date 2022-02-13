@@ -3,37 +3,13 @@ const Player = require("../models/Player");
 const leaderboard = require("../models/Leaderboard");
 const PrizePool = require("../models/PrizePool");
 
-// Update leaderboard every minute
-const updateLeaderboard = new CronJob(
-    "0 * * * * *",
-    async () => {
-        try {
-
-            // Get all players
-            const players = await Player.find({});
-
-            // Update all players
-            players.forEach(async (player) => {
-                await leaderboard.updateOne(player.username, player.money);
-            });
-            console.log("Leaderboard updated.");
-
-        } catch (err) {
-            // Return error
-            console.log(err);
-        }
-    },
-    null,
-    true
-);
-
 // Update rankings every day
 const updateRanking = new CronJob(
     "0 0 0 * * *",
     async () => {
         try {
             // Set all users lastDayRanking to current ranking
-            const players = await Player.find({});
+            const players = await Player.find({}).lean();
             players.forEach(async (player) => {
                 player.lastDayRanking = await leaderboard.rank(player.username);
                 await player.save();
@@ -102,4 +78,4 @@ const resetLeaderboard = new CronJob(
     true
 );
 
-module.exports = { updateLeaderboard, updateRanking, resetLeaderboard };
+module.exports = { updateRanking, resetLeaderboard };

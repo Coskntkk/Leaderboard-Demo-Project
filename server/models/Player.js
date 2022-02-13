@@ -12,11 +12,6 @@ const playerSchema = new Schema({
         type: String,
         required: true,
     },
-    money: {
-        type: Number,
-        required: true,
-        default: 0,
-    },
     lastDayRanking: {
         type: Number,
         required: true,
