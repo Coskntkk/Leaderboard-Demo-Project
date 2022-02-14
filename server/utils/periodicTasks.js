@@ -38,6 +38,9 @@ const resetLeaderboard = new CronJob(
             const prizePool = await PrizePool.findOne({});
             const totalMoney = prizePool.money;
 
+            // Get total count of players
+            const allPlayers = await Player.find({}).lean();
+
             const getPrize = (rank) => {
                 if (rank === 1) {
                     return 0.2 * totalMoney;
@@ -54,12 +57,19 @@ const resetLeaderboard = new CronJob(
                 }
             };
 
-            // Get top 100 players
-            const top100 = await leaderboard.top(100);
-            // Give prizes to top 100 players
-            top100.map(async (player) => {
-                let newMoney = player.score + getPrize(player.rank);
-                await leaderboard.updateOne(player.id, newMoney, "replace");
+            // For all players
+            allPlayers.map(async (player) => {
+                // Get player rank
+                let rank = await leaderboard.rank(player.username);
+
+                if (rank <= 100) {
+                    // If player is in top 100, give ingame prize
+                    let newMoney = player.totalMoney + getPrize(rank);
+                    await Player.findByIdAndUpdate(player._id, {totalMoney: newMoney});
+                } 
+
+                // Reset player score
+                await leaderboard.updateOne(player.username, 0, "replace");
             });
 
             // Reset prize pool

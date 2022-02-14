@@ -65,10 +65,10 @@ exports.getLeaderboard = async (req, res) => {
 exports.resetLeaderboard = async (req, res) => {
     try {
         // Reset leaderboard
-        await Promise.all(leaderboard.reset());
+        await leaderboard.clear();
 
         // Return success
-        res.status(200).json({ status: "success", result });
+        res.status(200).json({ status: "success", message: "Leaderboard reset" });
     } catch (err) {
         // Return error
         res.status(500).json({ status: "error", error: err.message });

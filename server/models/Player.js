@@ -24,6 +24,11 @@ const playerSchema = new Schema(
             type: Date,
             default: Date.now,
         },
+        totalMoney: {
+            type: Number,
+            required: true,
+            default: 0,
+        }
     },
     { versionKey: false }
 );

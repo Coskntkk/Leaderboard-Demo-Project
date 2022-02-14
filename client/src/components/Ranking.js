@@ -84,7 +84,7 @@ function Ranking() {
               <th scope="col"><strong>Rank</strong></th>
               <th scope="col"><strong>Player</strong></th>
               <th scope="col"><strong>Country</strong></th>
-              <th scope="col"><strong>Money</strong></th>
+              <th scope="col"><strong>Earn This Week</strong></th>
               <th scope="col"><strong>Daily Change</strong></th>
             </tr>
           </thead>
@@ -101,15 +101,6 @@ function Ranking() {
 
         {/* Neighbours if user not in top 100 */}
         <table className="table table-striped table-hover">
-          <thead>
-            <tr style={{backgroundColor: "lightblue"}}>
-              <th scope="col"><strong>Rank</strong></th>
-              <th scope="col"><strong>Player</strong></th>
-              <th scope="col"><strong>Country</strong></th>
-              <th scope="col"><strong>Money</strong></th>
-              <th scope="col"><strong>Daily Change</strong></th>
-            </tr>
-          </thead>
           <tbody>
           {leaderboard.map((item) => {
             if (item.rank > 100) {

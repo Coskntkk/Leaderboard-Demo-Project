@@ -35,6 +35,10 @@ exports.play = async (req, res) => {
             playerSocre += money;
             await leaderboard.updateOne(player.username, playerSocre);
 
+            // Add money to player
+            let newMoney = player.totalMoney + money;
+            await Player.findByIdAndUpdate(player._id, { totalMoney: newMoney });
+
             if (isAdmin) {
                 // If admin, return back
                 res.redirect("back");

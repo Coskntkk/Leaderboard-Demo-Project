@@ -6,14 +6,15 @@ const leaderboardController = require("../controllers/leaderboardController");
 
 // .../leaderboard/:username?
 router
+    .route("/reset")
+    // Reset leaderboard
+    .get(leaderboardController.resetLeaderboard);
+
+router
     .route("/:username?")
     // Get leaderboard
     .get(leaderboardController.getLeaderboard);
 
-router
-    .route("/reset")
-    // Reset leaderboard
-    .get(leaderboardController.resetLeaderboard);
 
 // Export router
 module.exports = router;
