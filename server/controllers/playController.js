@@ -6,7 +6,11 @@ const taxPercent = require("../config/config").taxPercent;
 exports.play = async (req, res) => {
     try {
         // Get player
-        const player = await Player.findOne({ username: req.body.username }).lean();
+        const player = await Player.findOne({
+            username: req.body.username,
+        }).lean();
+        let isAdmin = req.query.admin;
+
         if (!player) {
             res.status(400).json({
                 status: "error",
@@ -29,14 +33,19 @@ exports.play = async (req, res) => {
             playerSocre += money;
             await leaderboard.updateOne(player.username, playerSocre);
 
-            // Return response
-            res.status(200).json({
-                status: "success",
-                player: player.username,
-                playerMoney: playerSocre,
-                tax: tax,
-                pool: newPoolMoney,
-            });
+            if (isAdmin) {
+                // If admin, return back
+                res.redirect("back");
+            } else {
+                // Return response
+                res.status(200).json({
+                    status: "success",
+                    player: player.username,
+                    playerMoney: playerSocre,
+                    tax: tax,
+                    pool: newPoolMoney,
+                });
+            }
         }
     } catch (err) {
         // Return error

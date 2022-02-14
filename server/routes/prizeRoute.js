@@ -14,6 +14,6 @@ router
 router
     .route("/reset")
     // Reset prize pool
-    .get(prizeController.resetPoolPrize);
+    .post(prizeController.resetPoolPrize);
 
 module.exports = router;

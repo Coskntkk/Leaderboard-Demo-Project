@@ -13,5 +13,4 @@ router
     // Reset leaderboard
     .get(leaderboardController.resetLeaderboard);
 
-
 module.exports = router;

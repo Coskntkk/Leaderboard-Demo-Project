@@ -1,5 +1,13 @@
 <%- include('partials/_header') -%>
 
+    <form action="/admin/logout" method="get">
+    <button type="submit" class="btn btn-danger logout">Logout</button>
+    </form>
+
+    <img src="prize.png" alt="Prize" class="images">
+    <%- include('partials/_prize') -%>
+
+    <img src="players.png" alt="Players" class="images">
     <%- include('partials/_players') -%>
 
 <%- include('partials/_footer') -%>

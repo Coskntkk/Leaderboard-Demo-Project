@@ -15,7 +15,7 @@
                         <!-- Modal -->
                         <div class="modal fade" id="addPlayer" tabindex="-1">
                             <div class="modal-dialog">
-                                <form action="/players" method="POST">
+                                <form action="players?admin=true" method="POST">
                                     <div class="modal-content">
                                         <div class="modal-body">
                                             <div class="mb-3">
@@ -46,6 +46,7 @@
                         <th>Name</th>
                         <th>Country</th>
                         <th>Date Joined</th>
+                        <th>Give Money</th>
                         <th>Update</th>
                         <th>Delete</th>
                     </tr>
@@ -57,6 +58,36 @@
                             <td><strong><%= players[i].username %></strong></td>
                             <td><%= players[i].country %></td>
                             <td><%= players[i].dateJoined ? players[i].dateJoined.toLocaleString() : "Unknown" %></td>
+
+                            <td>
+                                <!-- Update player modal -->
+                                <button type="button" class="btn btn-success" data-bs-toggle="modal"
+                                    data-bs-target="#giveMoneyModal<%= players[i].username %>">
+                                    Give Money
+                                </button>
+                                <!-- Modal -->
+                                <div class="modal fade" id="giveMoneyModal<%= players[i].username %>" tabindex="-1">
+                                    <div class="modal-dialog">
+                                        <form action="/play?admin=true" method="POST">
+                                            <div class="modal-content">
+                                                <div class="modal-body">
+                                                    <input type="hidden" name="username" value="<%= players[i].username %>">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Value</label>
+                                                        <input type="number" class="form-control" name="money">
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-bs-dismiss="modal">Cancel</button>
+                                                    <button type="submit" class="btn btn-success">Add</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </td>
+
                             <td>
                                 <!-- Update player modal -->
                                 <button type="button" class="btn btn-info" data-bs-toggle="modal"
@@ -66,7 +97,7 @@
                                 <!-- Modal -->
                                 <div class="modal fade" id="updateModal<%= players[i].username %>" tabindex="-1">
                                     <div class="modal-dialog">
-                                        <form action="/players/<%= players[i].username %>?_method=PUT" method="POST">
+                                        <form action="/players/<%= players[i].username %>?_method=PUT&admin=true" method="POST">
                                             <div class="modal-content">
                                                 <div class="modal-body">
                                                     <div class="mb-3">
@@ -98,7 +129,7 @@
                                 <!-- Modal -->
                                 <div class="modal fade" id="deleteModal<%= players[i].username %>" tabindex="-1">
                                     <div class="modal-dialog">
-                                        <form action="/players/<%= players[i].username %>?_method=DELETE" method="POST">
+                                        <form action="/players/<%= players[i].username %>?_method=DELETE&admin=true" method="POST">
                                             <div class="modal-content">
                                                 <div class="modal-body">
                                                     Are you sure you want to delete <strong>

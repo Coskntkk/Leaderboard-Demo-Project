@@ -1,7 +1,9 @@
 const express = require("express");
-const cors = require('cors');
-const ejs = require('ejs');
-const methodOverride = require('method-override');
+require("dotenv").config();
+const session = require("express-session");
+const MongoStore = require("connect-mongo");
+const cors = require("cors");
+const methodOverride = require("method-override");
 
 // Connect to MongoDB and create prize pool if not exists
 const mongoConnect = require("./config/dbConfig");
@@ -17,10 +19,7 @@ PrizePool.findOne({}, (err, pool) => {
 });
 
 // Import the periodic tasks
-const {
-    updateRanking, 
-    resetLeaderboard,
-} = require("./utils/periodicTasks");
+const { updateRanking, resetLeaderboard } = require("./utils/periodicTasks");
 
 // Import the roters
 const indexRouter = require("./routes/indexRoute");
@@ -29,17 +28,32 @@ const prizeRouter = require("./routes/prizeRoute");
 const playRouter = require("./routes/playRoute");
 const leaderboardRouter = require("./routes/leaderboardRoute");
 
+// Create the app
 const app = express();
-
 // view engine setup
 app.set("view engine", "ejs");
 
 // Express Middlewares
-app.use(express.static(__dirname + "/public")); 
+app.use(express.static(__dirname + "/public"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cors());
-app.use(methodOverride('_method', {methods: ['POST', 'GET']}));
+app.use(methodOverride("_method", { methods: ["POST", "GET"] }));
+
+// Express Session
+global.userIN = null;
+app.use(
+    session({
+        secret: "panteon",
+        resave: false,
+        saveUninitialized: true,
+        store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
+    })
+);
+app.use("*", (req, res, next) => {
+    userIN = req.session.userID;
+    next();
+});
 
 // Routes
 app.use("/", indexRouter);

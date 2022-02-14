@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const redirectMiddleware = require("../middlewares/redirectMiddleware");
 const adminController = require("../controllers/adminController");
 
 // .../
@@ -7,7 +8,22 @@ router.get("/", function (req, res) {
     res.render("index");
 });
 
-router.route("/admin")
-    .get(adminController.getAdminPage);
+// .../admin
+router
+    .route("/admin")
+    // Get admin page
+    .get(redirectMiddleware, adminController.getAdminPage);
+
+// .../admin/login
+router
+    .route("/admin/login")
+    // Login
+    .post(adminController.login);
+
+// .../admin/logout
+router
+    .route("/admin/logout")
+    // Logout
+    .get(adminController.logout);
 
 module.exports = router;

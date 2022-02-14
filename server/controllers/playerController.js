@@ -17,9 +17,8 @@ exports.getAllPlayers = async (req, res) => {
         // Return players
         res.status(200).json({
             status: "success",
-            currentPlayers
+            currentPlayers,
         });
-
     } catch (err) {
         // Return error
         res.status(500).json({
@@ -34,6 +33,7 @@ exports.createPlayer = async (req, res) => {
     try {
         // Check if player exists
         let exists = await Player.findOne({ username: req.body.username });
+        let isAdmin = req.query.admin;
         if (exists) {
             res.status(400).json({
                 status: "error",
@@ -50,10 +50,19 @@ exports.createPlayer = async (req, res) => {
             const playerData = {
                 username: player.username,
                 country: player.country,
+                dateJoined: player.dateJoined,
             };
 
-            // Redirect to admin page
-            res.redirect("/admin");
+            if (isAdmin) {
+                // Redirect back
+                res.redirect("back");
+            } else {
+                // Return response
+                res.status(201).json({
+                    status: "success",
+                    player: playerData,
+                });
+            }
         }
     } catch (err) {
         // Return error
@@ -68,7 +77,9 @@ exports.createPlayer = async (req, res) => {
 exports.getPlayerByUsername = async (req, res) => {
     try {
         // Check if player exists
-        const player = await Player.findOne({ username: req.params.username }).lean();
+        const player = await Player.findOne({
+            username: req.params.username,
+        }).lean();
         if (!player) {
             res.status(404).json({
                 status: "error",
@@ -94,7 +105,10 @@ exports.getPlayerByUsername = async (req, res) => {
 exports.updatePlayer = async (req, res) => {
     try {
         // Check if player exists
-        let player = await Player.findOne({ username: req.params.username }).lean();
+        let player = await Player.findOne({
+            username: req.params.username,
+        }).lean();
+        let isAdmin = req.query.admin;
 
         if (!player) {
             res.status(400).json({
@@ -109,10 +123,17 @@ exports.updatePlayer = async (req, res) => {
                 { new: true }
             ).lean();
 
-            // Redirect to admin page
-            res.redirect("/admin");
+            if (isAdmin) {
+                // Redirect back
+                res.redirect("back");
+            } else {
+                // Return response
+                res.status(200).json({
+                    status: "success",
+                    player,
+                });
+            }
         }
-
     } catch (err) {
         // Return error
         res.status(500).json({
@@ -126,7 +147,11 @@ exports.updatePlayer = async (req, res) => {
 exports.deletePlayer = async (req, res) => {
     try {
         // Check if player exists
-        let player = await Player.findOne({ username: req.params.username }).lean();
+        let player = await Player.findOne({
+            username: req.params.username,
+        }).lean();
+        let isAdmin = req.query.admin;
+
         if (!player) {
             res.status(400).json({
                 status: "error",
@@ -139,8 +164,16 @@ exports.deletePlayer = async (req, res) => {
             // Delete player from leaderboard
             await leaderboard.remove(player.username);
 
-            // Redirect to admin page
-            res.redirect("/admin");
+            if (isAdmin) {
+                // Redirect back
+                res.redirect("back");
+            } else {
+                // Return response
+                res.status(200).json({
+                    status: "success",
+                    message: "Player deleted.",
+                });
+            }
         }
     } catch (err) {
         // Return error

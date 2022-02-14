@@ -32,7 +32,8 @@ exports.addPrizeToPool = async (req, res) => {
     try {
         // Get money and prize
         const money = parseInt(req.body.money);
-        const Pool = await PrizePool.findOne({})
+        const Pool = await PrizePool.findOne({}).lean();
+        let isAdmin = req.query.admin;
 
         if (!Pool) {
             // If pool is not found, return error
@@ -42,20 +43,29 @@ exports.addPrizeToPool = async (req, res) => {
             });
         } else {
             // If pool is found, add prize
-            Pool.money += money;
-            Pool.save();
+            let newMoney = Pool.money + money;
+            await PrizePool.findOneAndUpdate(
+                {},
+                { $inc: { money: newMoney } },
+                { new: true }
+            );
 
-            // Return response
-            res.status(200).json({
-                status: "success",
-                prize: Pool.money,
-            });
+            if (isAdmin) {
+                // If admin, return back
+                res.redirect("back");
+            } else {
+                // Return response
+                res.status(200).json({
+                    status: "success",
+                    prize: Pool.money,
+                });
+            }
         }
     } catch (err) {
         // Return error
         res.status(500).json({
             status: "error",
-            error: err,
+            error: err.message,
         });
     }
 };
@@ -64,7 +74,9 @@ exports.addPrizeToPool = async (req, res) => {
 exports.resetPoolPrize = async (req, res) => {
     try {
         // Get prize
-        const Pool = await PrizePool.findOne({})
+        const Pool = await PrizePool.findOne({});
+        let isAdmin = req.query.admin;
+
         if (!Pool) {
             // If pool is not found, return error
             res.status(500).json({
@@ -76,11 +88,16 @@ exports.resetPoolPrize = async (req, res) => {
             Pool.money = 0;
             Pool.save();
 
-            // Return response
-            res.status(200).json({
-                status: "success",
-                prize: Pool.money,
-            });
+            if (isAdmin) {
+                // If admin, return back
+                res.redirect("back");
+            } else {
+                // Return response
+                res.status(200).json({
+                    status: "success",
+                    prize: Pool.money,
+                });
+            }
         }
     } catch (err) {
         // Return error

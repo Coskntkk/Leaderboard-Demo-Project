@@ -12,13 +12,11 @@ const updateRanking = new CronJob(
             const players = await Player.find({}).lean();
             players.map(async (player) => {
                 let leaderboardPlayer = await leaderboard.find(player.username);
-                const newPlayer = await Player.findByIdAndUpdate(
-                    player._id,
-                    {lastDayRanking: leaderboardPlayer.rank}
-                );
+                const newPlayer = await Player.findByIdAndUpdate(player._id, {
+                    lastDayRanking: leaderboardPlayer.rank,
+                });
             });
             console.log("Ranking updated.");
-
         } catch (err) {
             // Return error
             console.log(err);
@@ -63,7 +61,6 @@ const resetLeaderboard = new CronJob(
             prizePool.money = 0;
             await prizePool.save();
             console.log("Leaderboard reset.");
-
         } catch (err) {
             // Return error
             console.log(err);

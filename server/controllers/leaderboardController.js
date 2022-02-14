@@ -10,9 +10,10 @@ exports.getLeaderboard = async (req, res) => {
         let userFound = true;
         // If username is provided
         if (username) {
-
             // Check if username exists
-            let playerData = await Player.findOne({ username: username }).lean();
+            let playerData = await Player.findOne({
+                username: username,
+            }).lean();
             if (!playerData) {
                 userFound = false;
             } else {
@@ -24,28 +25,36 @@ exports.getLeaderboard = async (req, res) => {
 
             // If player is not in top 100, get rank and arounds
             if (rank > 100) {
-                let arounds = await leaderboard.list(rank-3, rank+2);
+                let arounds = await leaderboard.list(rank - 3, rank + 2);
                 result = [...result, ...arounds];
             }
         }
-       
+
         // Get list of usernames
-        const usernames = result.map(player => player.id);
-        const playersData = await Player.find({ username: { $in: usernames } }).lean();
+        const usernames = result.map((player) => player.id);
+        const playersData = await Player.find({
+            username: { $in: usernames },
+        }).lean();
 
         // Merge players with their leaderboard data
-        const leaderboardData = playersData.map(playerData => {
-            let leaderboardItem = result.find(player => player.id === playerData.username);
-            return {
-                ...leaderboardItem,
-                country: playerData.country,
-                lastDayRanking: playerData.lastDayRanking
-            };
-        }).sort((a, b) => a.rank - b.rank);
+        const leaderboardData = playersData
+            .map((playerData) => {
+                let leaderboardItem = result.find(
+                    (player) => player.id === playerData.username
+                );
+                return {
+                    ...leaderboardItem,
+                    country: playerData.country,
+                    lastDayRanking: playerData.lastDayRanking,
+                };
+            })
+            .sort((a, b) => a.rank - b.rank);
 
-
-        res.status(200).json({ status: "success", leaderboard: leaderboardData, userFound });
-
+        res.status(200).json({
+            status: "success",
+            leaderboard: leaderboardData,
+            userFound,
+        });
     } catch (err) {
         // Return error
         res.status(500).json({ status: "error", error: err.message });
@@ -55,9 +64,7 @@ exports.getLeaderboard = async (req, res) => {
 exports.resetLeaderboard = async (req, res) => {
     try {
         // Reset leaderboard
-        await Promise.all(
-            leaderboard.reset()
-        );
+        await Promise.all(leaderboard.reset());
 
         // Return success
         res.status(200).json({ status: "success", result });
@@ -65,4 +72,4 @@ exports.resetLeaderboard = async (req, res) => {
         // Return error
         res.status(500).json({ status: "error", error: err.message });
     }
-}
+};
