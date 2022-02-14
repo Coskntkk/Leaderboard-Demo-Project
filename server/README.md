@@ -9,7 +9,7 @@ Server application for Leaderboard Demo Project.
 
 ## Demo
 
-[Visit demo]( )
+[Visit demo]( https://cos-leaderboard-server.herokuapp.com )
 
 
 ## Environment Variables
