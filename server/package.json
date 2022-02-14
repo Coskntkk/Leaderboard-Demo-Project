@@ -17,7 +17,6 @@
         "ioredis": "^4.28.5",
         "method-override": "^3.0.0",
         "mongoose": "^6.2.1",
-        "redis": "^4.0.3",
         "redis-rank": "^2.1.2"
     },
     "devDependencies": {
