@@ -33,13 +33,21 @@ Read [API Guide]( https://github.com/Coskntkk/Leaderboard-Demo-Project/blob/main
 ## Extra Features
 
 - Prize panel and countdown for remaining time until the end of the week.
+
 ![Prize Panel](https://i.imgur.com/FVXFxYW.png)
+
 - Searching player by username.
+
 ![Prize Panel](https://i.imgur.com/tabVa1U.png)
+
 - Admin panel for CRUD operations on players and prize.
+
 ![Prize Panel](https://i.imgur.com/0ZpDsie.png)
+
 - RESTful API fror players, prize and leaderboard. See [API Guide]( https://github.com/Coskntkk/Leaderboard-Demo-Project/blob/main/server/README.md )
+
 - Tiny flags for countries of players.
+
 ![Prize Panel](https://i.imgur.com/ooSfe3E.png)
 
 
