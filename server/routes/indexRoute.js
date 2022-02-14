@@ -1,6 +1,9 @@
+// Import modules
 const express = require("express");
 const router = express.Router();
+// Import middlewares
 const redirectMiddleware = require("../middlewares/redirectMiddleware");
+// Import controllers
 const adminController = require("../controllers/adminController");
 
 // .../
@@ -26,4 +29,5 @@ router
     // Logout
     .get(adminController.logout);
 
+// Export router
 module.exports = router;

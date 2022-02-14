@@ -1,3 +1,4 @@
+// Import modules
 const express = require("express");
 require("dotenv").config();
 const session = require("express-session");
@@ -55,16 +56,16 @@ app.use("*", (req, res, next) => {
     next();
 });
 
+// Periodic Tasks
+resetLeaderboard.start();
+updateRanking.start();
+
 // Routes
 app.use("/", indexRouter);
 app.use("/players", playersRouter);
 app.use("/prize", prizeRouter);
 app.use("/play", playRouter);
 app.use("/leaderboard", leaderboardRouter);
-
-// Periodic Tasks
-resetLeaderboard.start();
-updateRanking.start();
 
 // Run server
 const port = process.env.PORT || 3010;

@@ -1,8 +1,10 @@
+// Import modules
 const mongoose = require("mongoose");
 require("dotenv").config();
 const dbUrl =
     process.env.MONGODB_URI || "mongodb://localhost:27017/leaderboard";
 
+// Configure mongoose
 mongoose
     .connect(dbUrl, {
         useNewUrlParser: true,
@@ -20,4 +22,5 @@ const mongoConnect = () => {
     );
 };
 
+// Export connection
 module.exports = mongoConnect;

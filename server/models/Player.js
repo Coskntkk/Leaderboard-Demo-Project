@@ -1,6 +1,8 @@
+// Import modules
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
+// Create model
 const playerSchema = new Schema(
     {
         username: {
@@ -26,4 +28,5 @@ const playerSchema = new Schema(
     { versionKey: false }
 );
 
+// Export model
 module.exports = mongoose.model("Player", playerSchema);

@@ -1,5 +1,7 @@
+// Import modules
 const express = require("express");
 const router = express.Router();
+// Import controllers
 const playerController = require("../controllers/playerController");
 
 // .../players
@@ -20,4 +22,5 @@ router
     // Delete player by username
     .delete(playerController.deletePlayer);
 
+// Export router
 module.exports = router;

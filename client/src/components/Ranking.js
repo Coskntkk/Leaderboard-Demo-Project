@@ -1,8 +1,9 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import axios from "axios";
 import { nanoid } from 'nanoid';
-import { getDiff, getColor, getFlag } from "../functions/getters";
+import Rank from './Rank';
+import Countdown from './Countdown';
 const apiUrl = require('../config.json').apiUrl;
 
 function Ranking() {
@@ -51,7 +52,7 @@ function Ranking() {
   useEffect(() => {
     // Fetch data every 10 seconds
     fetchData();
-    const interval = setInterval(() => {
+    setInterval(() => {
       fetchData();
     }, 10000);
   }, []);
@@ -68,8 +69,9 @@ function Ranking() {
 
       {!failed && !loading && <>
       
-        <div className="prize"> 
-          <h3> Total prize on the pool: <strong>{prize}</strong> 💰</h3>
+        <div className="prize col-lg-4 offset-lg-4 col-md-10 offset-md-1"> 
+          <h3> Total prize on the pool: <strong style={{color: "brown"}}>{prize}</strong> 💰</h3>
+          <Countdown />
         </div>
 
         {notFound && <div className="alert alert-danger" role="alert">
@@ -78,7 +80,7 @@ function Ranking() {
       
         <table className="table table-striped table-hover">
           <thead>
-            <tr>
+            <tr style={{backgroundColor: "lightblue"}}>
               <th scope="col"><strong>Rank</strong></th>
               <th scope="col"><strong>Player</strong></th>
               <th scope="col"><strong>Country</strong></th>
@@ -87,55 +89,52 @@ function Ranking() {
             </tr>
           </thead>
           <tbody>
-
             {leaderboard.map((item) => {
               if (item.rank <= 100) {
                 return (
-                  <tr key={nanoid()} style={item.id === username ? {backgroundColor: "wheat"}: null} >
-                    <th scope="row" style={{color: getColor(item.rank)}}>{item.rank}</th>
-                    <td>{item.id}</td>
-                    <td> {getFlag(item.country)} {item.country}</td>
-                    <td>{(Math.round(item.score  * 100) / 100).toFixed(2)}</td>
-                    {getDiff(item)}
-                  </tr>
+                 <Rank key={nanoid()} item={item} username={username}/>
                 )
               }
             })}
-
           </tbody>
         </table>
 
+        {/* Neighbours if user not in top 100 */}
         <table className="table table-striped table-hover">
+          <thead>
+            <tr style={{backgroundColor: "lightblue"}}>
+              <th scope="col"><strong>Rank</strong></th>
+              <th scope="col"><strong>Player</strong></th>
+              <th scope="col"><strong>Country</strong></th>
+              <th scope="col"><strong>Money</strong></th>
+              <th scope="col"><strong>Daily Change</strong></th>
+            </tr>
+          </thead>
           <tbody>
-
           {leaderboard.map((item) => {
             if (item.rank > 100) {
               return (
-                <tr key={nanoid()} style={item.id === username ? {backgroundColor: "wheat"}:{}}>
-                  <th scope="row" style={{color: getColor(item.rank)}}>{item.rank}</th>
-                  <td>{item.id}</td>
-                  <td> {getFlag(item.country)} {item.country}</td>
-                  <td>{item.score}</td>
-                  {getDiff(item)}
-                </tr>
+                <Rank key={nanoid()} item={item} username={username}/>
               )
             }
           })}
-
           </tbody>
         </table></>}
 
+        {/* Loading */}
         {!failed && loading && 
         <div className='loading'>
           <h1>Loading.</h1>
           <i className="fas fa-cog fa-spin fa-2x"></i>
         </div>}
 
+        {/* Fail alert */}
         {failed &&
         <div className='failed'>
           <h1>Failed to connect to server :(</h1>
           <i className="fa-solid fa-triangle-exclamation"></i>
         </div>}
+
     </div>
   )
 };

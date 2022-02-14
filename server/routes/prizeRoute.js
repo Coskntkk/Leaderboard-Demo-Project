@@ -1,5 +1,7 @@
+// Import modules
 const express = require("express");
 const router = express.Router();
+// Import controllers
 const prizeController = require("../controllers/prizeController");
 
 // .../prize
@@ -16,4 +18,5 @@ router
     // Reset prize pool
     .post(prizeController.resetPoolPrize);
 
+// Export router
 module.exports = router;

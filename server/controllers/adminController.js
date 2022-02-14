@@ -1,4 +1,6 @@
+// Import modules
 require("dotenv").config();
+// Import models
 const Player = require("../models/Player");
 const PrizePool = require("../models/PrizePool");
 

@@ -1,3 +1,4 @@
+// Import models
 const Player = require("../models/Player");
 const leaderboard = require("../models/Leaderboard");
 

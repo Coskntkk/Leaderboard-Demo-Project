@@ -1,5 +1,7 @@
+// Import modules
 const express = require("express");
 const router = express.Router();
+// Import controllers
 const leaderboardController = require("../controllers/leaderboardController");
 
 // .../leaderboard/:username?
@@ -13,4 +15,5 @@ router
     // Reset leaderboard
     .get(leaderboardController.resetLeaderboard);
 
+// Export router
 module.exports = router;

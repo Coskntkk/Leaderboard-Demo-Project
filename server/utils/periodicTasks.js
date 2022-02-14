@@ -1,4 +1,7 @@
+// Import modules
 const CronJob = require("cron").CronJob;
+
+// Import models
 const Player = require("../models/Player");
 const leaderboard = require("../models/Leaderboard");
 const PrizePool = require("../models/PrizePool");
@@ -43,8 +46,10 @@ const resetLeaderboard = new CronJob(
                 } else if (rank === 3) {
                     return 0.1 * totalMoney;
                 } else {
+                    let rankCount = 100 - 4 + 1;
+                    let sumRanks = ((4 + 100) / 2) * rankCount;
                     let remainingMoney = (totalMoney / 100) * 55;
-                    let percent = (remainingMoney / 5045) * (104 - rank);
+                    let percent = (remainingMoney / sumRanks) * (104 - rank);
                     return percent;
                 }
             };

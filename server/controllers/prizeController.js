@@ -1,3 +1,4 @@
+// Import models
 const PrizePool = require("../models/PrizePool");
 
 // Get pool prize

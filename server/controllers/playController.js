@@ -1,6 +1,8 @@
+// Import models
 const Player = require("../models/Player");
 const PrizePool = require("../models/PrizePool");
 const leaderboard = require("../models/Leaderboard");
+// Get tax percent from config
 const taxPercent = require("../config/config").taxPercent;
 
 exports.play = async (req, res) => {

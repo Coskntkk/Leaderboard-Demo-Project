@@ -1,6 +1,6 @@
 {
-    "name": "server",
-    "version": "0.0.0",
+    "name": "leaderboard-server",
+    "version": "1.0.0",
     "private": true,
     "scripts": {
         "start": "nodemon server.js"
@@ -22,7 +22,6 @@
     },
     "devDependencies": {
         "nodemon": "^2.0.15",
-        "prettier": "2.5.1",
-        "request": "^2.88.2"
+        "prettier": "2.5.1"
     }
 }
