@@ -39,8 +39,8 @@ exports.getAdminPage = async (req, res) => {
 exports.login = (req, res) => {
     try {
         const { username, password } = req.body;
-        const adminUsername = process.env.ADMIN_USERNAME;
-        const adminPassword = process.env.ADMIN_PASSWORD;
+        const adminUsername = process.env.ADMIN_USERNAME || "admin";
+        const adminPassword = process.env.ADMIN_PASSWORD || "admin";
 
         // Check if username and password are correct
         if (username === adminUsername && password === adminPassword) {

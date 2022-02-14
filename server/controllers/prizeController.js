@@ -47,7 +47,7 @@ exports.addPrizeToPool = async (req, res) => {
             let newMoney = Pool.money + money;
             await PrizePool.findOneAndUpdate(
                 {},
-                { $inc: { money: newMoney } },
+                { money: newMoney },
                 { new: true }
             );
 
