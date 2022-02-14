@@ -6,13 +6,6 @@
 
 Server application for Leaderboard Demo Project.
 
-## Features
-
-- RESTful API for players, leaderboard and prize
-- Admin panel
-- CRUD operations on players and prize for admin
-
-
 
 ## Demo
 
