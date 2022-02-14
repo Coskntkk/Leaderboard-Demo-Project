@@ -30,6 +30,11 @@ Read [API Guide]( https://github.com/Coskntkk/Leaderboard-Demo-Project/blob/main
     - The Daily Diff column displays the ranking change made today `colored`.
 
 
+## Demo
+
+[Visit demo]( https://leaderboard-demo-project.vercel.app )
+
+
 ## Extra Features
 
 - Prize panel and countdown for remaining time until the end of the week.
@@ -49,11 +54,6 @@ Read [API Guide]( https://github.com/Coskntkk/Leaderboard-Demo-Project/blob/main
 - Tiny flags for countries of players.
 
 ![Prize Panel](https://i.imgur.com/ooSfe3E.png)
-
-
-## Demo
-
-[Visit demo]( )
 
 
 ## Run Locally
