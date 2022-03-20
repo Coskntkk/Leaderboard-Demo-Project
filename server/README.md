@@ -7,11 +7,6 @@
 Server application for Leaderboard Demo Project.
 
 
-## Demo
-
-[Visit demo]( https://cos-leaderboard-server.herokuapp.com )
-
-
 ## Environment Variables
 
 To run this project, you will need to add the following environment variables to your .env file
