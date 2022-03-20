@@ -1,6 +1,3 @@
-
-![Logo](https://static.wixstatic.com/media/15a9ae_d33b9e18b6b74641bcb5a56ec25d4f2a~mv2.png/v1/fill/w_440,h_440,al_c,q_85,usm_0.66_1.00_0.01/Image-empty-state.webp)
-
 # Leaderboard Demo Project
 
 Leaderboard is a FullStack Demo Project for Leaderboard system of a hypothetical game.
